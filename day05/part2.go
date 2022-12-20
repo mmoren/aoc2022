@@ -8,8 +8,9 @@ import (
 )
 
 func (o *operation) execute9001(stacks [][]byte) {
-	stacks[o.dst-1] = append(stacks[o.src-1][:o.n], stacks[o.dst-1]...)
-	stacks[o.src-1] = stacks[o.src-1][o.n:]
+	stacks[o.dst] = append(make([]byte, o.n), stacks[o.dst]...)
+	copy(stacks[o.dst], stacks[o.src][:o.n])
+	stacks[o.src] = stacks[o.src][o.n:len(stacks[o.src])]
 }
 
 func Part2(r io.Reader) {
@@ -37,6 +38,8 @@ func Part2(r io.Reader) {
 	for s.Scan() {
 		var op operation
 		_, err := fmt.Sscanf(s.Text(), "move %d from %d to %d", &op.n, &op.src, &op.dst)
+		op.src--
+		op.dst--
 		if err != nil {
 			if err == io.EOF {
 				break
